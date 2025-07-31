@@ -1,13 +1,13 @@
 {
   "name": "nodejs-com-nosql",
   "version": "1.0.0",
-  "description": "",
+  "description": "Bybabnk API with Node.js and MongoDB in memory",
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production node src/index.js",
     "dev": "cross-env NODE_ENV=development nodemon src/index.js"
   },
-  "author": "",
+  "author": "Anderson Lima",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",

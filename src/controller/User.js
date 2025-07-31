@@ -74,6 +74,11 @@ class UserController {
     const { userRepository, getUser } = this.di
     const { email, password } = req.body
     const user = await getUser({ repository: userRepository, userFilter: { email, password } })
+
+    console.log('[Controller][User]: Auth -> ', {
+      user,
+      email,
+    });
     
     if (!user?.[0]) return res.status(401).json({ message: 'Usuário não encontrado' })
     const userToTokenize = {...user[0], id: user[0].id.toString()}
