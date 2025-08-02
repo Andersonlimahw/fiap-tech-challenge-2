@@ -22,7 +22,7 @@ router.get('/health', healthCheckController.check.bind(healthCheckController))
 
 /**
  * @swagger
- * /health:
+ * /live:
  *   get:
  *     summary: Verifica o status da aplicação
  *     tags: [Health Check]

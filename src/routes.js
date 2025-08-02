@@ -3,7 +3,6 @@ const AccountController = require('./controller/Account')
 const accountController = new AccountController({})
 const router = Router()
 
-
 /**
  * @swagger
  * /account:
@@ -55,7 +54,6 @@ router.post('/account/transaction', accountController.createTransaction.bind(acc
  */
 router.get('/account/:accountId/statement', accountController.getStatment.bind(accountController))
 
-
 /**
  * @swagger
  * /account/{accountId}/statement:
@@ -78,7 +76,6 @@ router.get('/account/:accountId/statement', accountController.getStatment.bind(a
  *         description: Token invalido
  */
 router.delete('/account/:accountId/transaction/:transactionId', accountController.deleteTransactionById.bind(accountController));
-
 
 /**
  * @swagger
