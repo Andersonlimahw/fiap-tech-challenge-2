@@ -3,22 +3,41 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 
 async function connectDB() {
   try {
-    if (process.env.NODE_ENV === 'development' || !process.env.MONGO_URI) {
-      // Iniciar MongoDB em memória para desenvolvimento
-      const mongod = await MongoMemoryServer.create();
-      const mongoUri = mongod.getUri();
-      await mongoose.connect(mongoUri);
-      console.log('Conectado ao MongoDB em memória');
-    } else {
-      // Conectar ao MongoDB real em produção
-      await mongoose.connect(process.env.MONGO_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
+    const mongooseOptions = {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 120000, // 2 minutes in milliseconds
+      family: 4, // Use IPv4
+      socketTimeoutMS: 45000, // 45 seconds for socket timeout
+      connectTimeoutMS: 120000, // 2 minutes in milliseconds
+    };
+
+    // Always try to use MongoDB Memory Server first
+    try {
+      const mongod = await MongoMemoryServer.create({
+        binary: {
+          version: '7.0.4',
+          downloadDir: './.mongodb-binaries',
+        },
       });
-      console.log('Conectado ao MongoDB');
+      const mongoUri = mongod.getUri();
+      await mongoose.connect(mongoUri, mongooseOptions);
+      console.log('Conectado ao MongoDB em memória');
+      return;
+    } catch (memoryServerError) {
+      console.log('Fallback para MongoDB remoto:', memoryServerError.message);
+    }
+
+    // Fallback to remote MongoDB if memory server fails
+    if (process.env.MONGO_URI) {
+      await mongoose.connect(process.env.MONGO_URI, mongooseOptions);
+      console.log('Conectado ao MongoDB remoto');
+    } else {
+      throw new Error('MONGO_URI não definida e MongoDB em memória falhou');
     }
   } catch (error) {
-    console.error('Erro ao conectar ao MongoDB:', error);
+    console.error('Erro fatal ao conectar ao MongoDB:', error);
+    process.exit(1); // Exit on fatal connection error
   }
 }
 
