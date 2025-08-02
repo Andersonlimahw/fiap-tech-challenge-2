@@ -1,3 +1,4 @@
+require('dotenv').config();
 const Express = require('express')
 const pinoHttp = require('pino-http');
 const logger = require('./logger');
