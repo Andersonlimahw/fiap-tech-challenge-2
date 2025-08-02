@@ -13,7 +13,7 @@ async function connectDB() {
     };
 
     // Use Memory Server only in development
-    if (process.env.NODE_ENV === 'potato') {
+    if (process.env.NODE_ENV === 'development') {
       try {
         const mongod = await MongoMemoryServer.create({
           binary: {
