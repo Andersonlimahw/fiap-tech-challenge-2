@@ -3,44 +3,22 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 
 async function connectDB() {
   try {
-    const mongooseOptions = {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 120000, // 2 minutes in milliseconds
-      family: 4, // Use IPv4
-      socketTimeoutMS: 45000, // 45 seconds for socket timeout
-      connectTimeoutMS: 120000, // 2 minutes in milliseconds
-    };
-
-    // Use Memory Server only in development
-    if (process.env.NODE_ENV === 'development') {
-      try {
-        const mongod = await MongoMemoryServer.create({
-          binary: {
-            version: '7.0.4',
-            downloadDir: './.mongodb-binaries',
-          },
-        });
-        const mongoUri = mongod.getUri();
-        await mongoose.connect(mongoUri, mongooseOptions);
-        console.log('Conectado ao MongoDB em memória (ambiente de desenvolvimento)');
-        return;
-      } catch (memoryServerError) {
-        console.error('Erro ao iniciar MongoDB em memória:', memoryServerError.message);
-        process.exit(1);
-      }
+    if (process.env.NODE_ENV === 'development' || !process.env.MONGO_DB_URI) {
+      // Iniciar MongoDB em memória para desenvolvimento
+      const mongod = await MongoMemoryServer.create();
+      const mongoUri = mongod.getUri();
+      await mongoose.connect(mongoUri);
+      console.log('Conectado ao MongoDB em memória');
+    } else {
+      // Conectar ao MongoDB real em produção
+      await mongoose.connect(process.env.MONGO_DB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      });
+      console.log('Conectado ao MongoDB remoto');
     }
-
-    // For production, always use remote MongoDB
-    if (!process.env.MONGO_DB_URI) {
-      throw new Error('MONGO_DB_URI não definida em ambiente de produção');
-    }
-
-    await mongoose.connect(process.env.MONGO_DB_URI, mongooseOptions);
-    console.log('Conectado ao MongoDB remoto');
   } catch (error) {
-    console.error('Erro fatal ao conectar ao MongoDB:', error);
-    process.exit(1);
+    console.error('Erro ao conectar ao MongoDB:', error);
   }
 }
 
