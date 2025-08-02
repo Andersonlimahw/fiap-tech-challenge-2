@@ -60,6 +60,33 @@ router.post('/user', userController.create.bind(userController))
 
 /**
  * @swagger
+ * /user:
+ *   put:
+ *     summary: Cria um novo usuário
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Usuário criado com sucesso
+ *       400:
+ *         description: Dados inválidos
+ */
+router.put('/user/:id', userController.update.bind(userController))
+
+/**
+ * @swagger
  * /user/auth:
  *   post:
  *     summary: Autenticação de usuário
