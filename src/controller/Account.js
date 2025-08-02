@@ -16,6 +16,7 @@ class AccountController {
       getAccount: require('../feature/Account/getAccount'),
       saveTransaction: require('../feature/Transaction/saveTransaction'),
       getTransaction: require('../feature/Transaction/getTransaction'),
+      deleteTransaction: require('../feature/Transaction/deleteTransaction'),
       getCard: require('../feature/Card/getCard'),
     }, di)
   }
@@ -71,6 +72,79 @@ class AccountController {
       }
     })
   }
+
+  async delete(req, res) {
+    try {
+      const { id } = req.params;
+      const { accountRepository, deleteAccount } = this.di;
+
+      if (!id) {
+        return res.status(400).json({ 
+            message: 'ID da conta não fornecido' 
+        });
+      }
+
+      const deletedAccount = await deleteAccount({
+          id,
+          repository: accountRepository
+      });
+
+      if (!deletedAccount) {
+        return res.status(404).json({ 
+            message: 'Conta não encontrada' 
+        });
+      }
+
+      res.status(200).json({
+          message: 'Conta deletada com sucesso',
+          result: deletedAccount
+      });
+    } catch (error) {
+      console.error('Delete account error:', error);
+      res.status(500).json({
+          message: 'Erro ao deletar conta',
+          error: error.message
+      });
+    }
+  }
+
+  async deleteTransactionById(req, res) {
+    try {
+      const { transactionId, accountId } = req.params;
+      const { transactionRepository, deleteTransaction } = this.di;
+
+      if (!transactionId || !accountId) {
+        return res.status(400).json({ 
+            message: 'ID da transação ou conta não fornecido' 
+        });
+      }
+
+      const deletedTransaction = await deleteTransaction({
+          transactionId,
+          accountId,
+          repository: transactionRepository
+      });
+
+      if (!deletedTransaction) {
+        return res.status(404).json({ 
+            message: `Transação com ID ${transactionId} não encontrada para a conta ${accountId}`
+        });
+      }
+
+      res.status(200).json({
+          message: `Transação com ID ${transactionId} deletada com sucesso para a conta ${accountId}`,
+          result: deletedTransaction
+      });
+    } catch (error) {
+      console.error('Delete transaction error:', error);
+      res.status(500).json({
+          message: 'Erro ao deletar transação',
+          error: error.message
+      });
+    }
+  }
 }
 
-module.exports = AccountController
+
+module.exports = AccountController;
+
