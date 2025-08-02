@@ -17,6 +17,7 @@ class AccountController {
       saveTransaction: require('../feature/Transaction/saveTransaction'),
       getTransaction: require('../feature/Transaction/getTransaction'),
       deleteTransaction: require('../feature/Transaction/deleteTransaction'),
+      updateTransaction: require('../feature/Transaction/updateTransaction'),
       getCard: require('../feature/Card/getCard'),
     }, di)
   }
@@ -140,6 +141,44 @@ class AccountController {
       res.status(500).json({
           message: 'Erro ao deletar transação',
           error: error.message
+      });
+    }
+  }
+
+  async updateTransactionById(req, res) {
+    try {
+      const { transactionId, accountId } = req.params;
+      const updateData = req.body;
+      const { transactionRepository, updateTransaction } = this.di;
+
+      if (!transactionId || !accountId) {
+        return res.status(400).json({ 
+          message: 'ID da transação ou conta não fornecido' 
+        });
+      }
+
+      const updatedTransaction = await updateTransaction({
+        transactionId,
+        accountId,
+        updateData,
+        repository: transactionRepository
+      });
+
+      if (!updatedTransaction) {
+        return res.status(404).json({ 
+          message: `Transação com ID ${transactionId} não encontrada para a conta ${accountId}`
+        });
+      }
+
+      res.status(200).json({
+        message: 'Transação atualizada com sucesso',
+        result: updatedTransaction
+      });
+    } catch (error) {
+      console.error('Update transaction error:', error);
+      res.status(500).json({
+        message: 'Erro ao atualizar transação',
+        error: error.message
       });
     }
   }

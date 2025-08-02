@@ -78,4 +78,28 @@ router.get('/account/:accountId/statement', accountController.getStatment.bind(a
  */
 router.delete('/account/:accountId/transaction/:transactionId', accountController.deleteTransactionById.bind(accountController));
 
+
+/**
+ * @swagger
+ * /account/{accountId}/transaction/{transactionId}:
+ *   get:
+ *     summary: atualiza uma transação da conta
+ *     tags: [Extratos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: accountId
+ *         required: true
+ *         description: ID da conta
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Extrato encontrado
+ *       401:
+ *         description: Token invalido
+ */
+router.put('/account/:accountId/transaction/:transactionId', accountController.updateTransactionById.bind(accountController));
+
 module.exports = router
