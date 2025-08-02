@@ -11,7 +11,7 @@ const updateTransaction = async ({
   }
   
   const result = await repository.updateById(transactionId, updateData);
-  return new DetailedAccountModel(result.toJSON());
+  return result ? new DetailedAccountModel(result.toJSON()) : null;
 }
 
 module.exports = updateTransaction;

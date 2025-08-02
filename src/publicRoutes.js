@@ -1,8 +1,38 @@
 const { Router } = require('express')
 const UserController = require('./controller/User')
+const HealthCheckController = require('./controller/HealthCheck')
 
 const userController = new UserController({})
+const healthCheckController = new HealthCheckController()
 const router = Router()
+
+/**
+ * @swagger
+ * /health:
+ *   get:
+ *     summary: Verifica o status da aplicação
+ *     tags: [Health Check]
+ *     responses:
+ *       200:
+ *         description: Aplicação está saudável
+ *       500:
+ *         description: Problemas com a aplicação
+ */
+router.get('/health', healthCheckController.check.bind(healthCheckController))
+
+/**
+ * @swagger
+ * /health:
+ *   get:
+ *     summary: Verifica o status da aplicação
+ *     tags: [Health Check]
+ *     responses:
+ *       200:
+ *         description: Aplicação está saudável
+ *       500:
+ *         description: Problemas com a aplicação
+ */
+router.get('/live', healthCheckController.live.bind(healthCheckController))
 
 /**
  * @swagger
@@ -116,5 +146,7 @@ router.put('/user/:id', userController.update.bind(userController))
  *         description: Credenciais inválidas
  */
 router.post('/user/auth', userController.auth.bind(userController))
+
+
 
 module.exports = router
