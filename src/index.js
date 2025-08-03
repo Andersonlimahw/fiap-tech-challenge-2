@@ -21,7 +21,10 @@ app.use(cors({
 app.use(publicRoutes)
 app.get('/', (req, res) => {
   req.log.info('Rota raiz acessada');
-  res.send('API Bybabnk UP!');
+  res.json({
+    message: 'API Byte Bank UP!',
+    date: new Date().toISOString()
+  });
 });
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use((req, res, next) => {
@@ -36,9 +39,11 @@ app.use((req, res, next) => {
 })
 app.use(routes)
 
+const PORT_VALUE = process.env.PORT || 3003;
+
 connectDB().then(() => {
-    app.listen(3000, () => {
-        logger.info(`[BYTE BANK: API]: Servidor rodando na porta 3000`);
+    app.listen(PORT_VALUE, () => {
+        logger.info(`[BYTE BANK: API]: Servidor rodando na porta ${PORT_VALUE}`);
     });
 });
 

@@ -35,7 +35,7 @@ async function connectDB() {
   };
 
   try {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'developmentadad') {
       const mongod = await MongoMemoryServer.create();
       const mongoUri = mongod.getUri();
       await connectWithRetry(mongoUri, mongooseOptions);
