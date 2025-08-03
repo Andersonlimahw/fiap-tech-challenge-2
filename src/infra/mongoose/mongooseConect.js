@@ -2,7 +2,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
-const MONGODB_TIMEOUT = 1200000; // 2 minutes
+const MONGODB_TIMEOUT = 60000; // 60 seconds
 const MAX_RETRIES = 3;
 
 async function connectWithRetry(uri, options, retries = MAX_RETRIES) {
@@ -22,8 +22,6 @@ async function connectWithRetry(uri, options, retries = MAX_RETRIES) {
 
 async function connectDB() {
   const mongooseOptions = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     serverSelectionTimeoutMS: MONGODB_TIMEOUT,
     socketTimeoutMS: MONGODB_TIMEOUT,
     connectTimeoutMS: MONGODB_TIMEOUT,
@@ -32,10 +30,10 @@ async function connectDB() {
     w: 'majority',
     maxPoolSize: 10,
     minPoolSize: 2,
-  };
+};
 
   try {
-    if (process.env.NODE_ENV === 'developmentadad') {
+    if (process.env.NODE_ENV === 'development') {
       const mongod = await MongoMemoryServer.create();
       const mongoUri = mongod.getUri();
       await connectWithRetry(mongoUri, mongooseOptions);
